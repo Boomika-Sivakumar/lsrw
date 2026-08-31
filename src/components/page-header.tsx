@@ -19,15 +19,21 @@ export function PageHeader({
     <div className="flex flex-wrap items-center justify-between gap-4 animate-fade-in-up">
       <div className="flex items-center gap-4">
         {icon && (
-          <span className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl text-white shadow-lift ${gradient}`}>{icon}</span>
+          <span className={`flex h-13 w-13 items-center justify-center rounded-2xl text-2xl text-white shadow-lift transition-transform duration-300 hover:scale-105 ${gradient}`}>
+            {icon}
+          </span>
         )}
         <div>
-          {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary-500">{eyebrow}</p>}
-          <h1 className="text-2xl font-extrabold sm:text-3xl">{title}</h1>
-          {subtitle && <p className="mt-1 max-w-2xl text-sm text-ink-500">{subtitle}</p>}
+          {eyebrow && (
+            <span className="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-primary-600">
+              {eyebrow}
+            </span>
+          )}
+          <h1 className="font-display text-2xl font-extrabold text-ink-900 sm:text-3xl tracking-tight">{title}</h1>
+          {subtitle && <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-500">{subtitle}</p>}
         </div>
       </div>
-      {right && <div className="flex items-center gap-2">{right}</div>}
+      {right && <div className="flex items-center gap-2.5">{right}</div>}
     </div>
   );
 }
@@ -44,11 +50,11 @@ export function StatCard({
   gradient?: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-ink-200/70 bg-white p-5 shadow-card">
-      <div className={`absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br opacity-15 blur-2xl ${gradient}`} />
-      <p className="text-xs font-semibold uppercase tracking-wider text-ink-400">{label}</p>
+    <div className="group relative overflow-hidden rounded-2xl border border-ink-200/70 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
+      <div className={`pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br opacity-15 blur-2xl transition-opacity group-hover:opacity-30 ${gradient}`} />
+      <p className="text-xs font-bold uppercase tracking-wider text-ink-400">{label}</p>
       <p className="mt-1.5 font-display text-3xl font-extrabold text-ink-900">{value}</p>
-      {sub && <p className="mt-0.5 text-xs font-medium text-emerald-600">{sub}</p>}
+      {sub && <p className="mt-1 text-xs font-semibold text-emerald-600">{sub}</p>}
     </div>
   );
 }
