@@ -1,2 +1,40 @@
-/node_modules
-.next/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# Env / secrets
+.env
+.env.local
+*.pem
+*.key
+
+# Database
+*.db
+*.sqlite3
+database/dev.db
+
+# Recordings / uploads
+backend/storage/uploads/
+backend/storage/recordings/
+storage/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+powershell.cmd
+

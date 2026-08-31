@@ -1,0 +1,52 @@
+"""Authentication routes: register, login, me, logout."""
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
+from app.auth.deps import get_current_user
+from app.auth.jwt import authenticate, create_access_token
+from app.database.db import get_db
+from app.models.user import User
+from app.schemas.api import RegisterRequest, TokenResponse
+from app.services.user_service import register_user
+
+router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+
+@router.post("/register", response_model=TokenResponse)
+def register(data: RegisterRequest, db: Session = Depends(get_db)):
+    try:
+        user = register_user(
+            db,
+            username=data.username,
+            email=data.email,
+            password=data.password,
+            full_name=data.full_name,
+            role=data.role,
+            goals=data.goals,
+            admin_code=data.admin_code,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    token = create_access_token(user.id, user.role)
+    return {"access_token": token, "token_type": "bearer", "user": user.to_public_dict()}
+
+
+@router.post("/login", response_model=TokenResponse)
+def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = authenticate(form.username, form.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    token = create_access_token(user.id, user.role)
+    return {"access_token": token, "token_type": "bearer", "user": user.to_public_dict()}
+
+
+@router.get("/me")
+def me(user: User = Depends(get_current_user)):
+    return user.to_public_dict()
+
+
+@router.post("/logout")
+def logout(user: User = Depends(get_current_user)):
+    # JWT is stateless; the client discards the token.
+    return {"detail": "Logged out"}

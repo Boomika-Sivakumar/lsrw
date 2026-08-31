@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: lsrw-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lsrw_ai
+      MYSQL_USER: lsrw
+      MYSQL_PASSWORD: lsrw_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - lsrw_mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: lsrw-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: lsrw_ai
+      DB_USER: lsrw
+      DB_PASSWORD: lsrw_password
+      DATABASE_URL: mysql+pymysql://lsrw:lsrw_password@db:3306/lsrw_ai
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  lsrw_mysqldata:
